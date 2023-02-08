@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sth.project.web">
+
+<!-- 전체 컬럼값을 조회 -->
+<select id="memberselectAll" resultType="MemberDTO">
+select id, pwd, name, email, phone, birth from sth_member
+</select>
+
+<!-- 개별 컬럼값을 조회 -->
+<select id="memberselect" parameterType="MemberDTO" resultType="MemberDTO">
+select id, pwd, name, email, phone, birth from sth_member
+where id = #{id}
+</select>
+
+<!-- 컬럼값을 입력 -->
+<insert id="memberinsert" parameterType="MemberDTO">
+insert into sth_member (id, pwd, name, email, phone, birth)
+values(#{id}, #{pwd}, #{name}, #{email}, #{phone}, #{birth})
+</insert>
+
+<!-- 컬럼값 수정 -->
+<update id="memberupdate" parameterType="MemberDTO">
+update sth_member set pwd = #{pwd}, name = #{name}, email = #{email}, phone = #{phone}, birth = #{birth}
+where id = #{id}
+</update>
+
+<!-- 컬럼값 삭제 -->
+<delete id="memberdelete" parameterType="MemberDTO">
+delete from sth_member
+where id = #{id}
+</delete>
+
+<!-- 로그인 -->
+<select id="login" parameterType="MemberDTO" resultType="MemberDTO">
+select
+     id,pwd
+ from
+    sth_member
+ where id = #{id}
+     and pwd = #{pwd}
+</select>
+
+<!-- ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ -->
+
+<!-- 게시판 전체조회 -->
+<select id="boardselectAll" resultType="BoardDTO">
+select bnum, btitle, bcontent, bdate from sth_board
+</select>
+
+<!-- 게시판 개별조회 -->
+<select id="boardselect" resultType="BoardDTO" parameterType="BoardDTO">
+select bnum, btitle, bcontent, bdate from sth_board
+where bnum = #{bnum}
+</select>
+
+<!-- 게시판 작성 -->
+<insert id="boardinsert" parameterType="BoardDTO">
+insert into sth_board (btitle, bcontent, bdate)
+values (#{btitle}, #{bcontent}, now())
+</insert>
+
+
+<!-- 게시판 수정 -->
+<update id="boardupdate" parameterType="BoardDTO">
+update sth_board set btitle = #{btitle}, bcontent = #{bcontent}
+where bnum = #{bnum}
+</update>
+
+<!-- 게시판 삭제 -->
+<delete id="boarddelete" parameterType="BoardDTO">
+delete from sth_board
+where bnum = #{bnum}
+</delete>
+
+<!-- 게시물 총 갯수 -->
+<select id="count" resultType="int">
+ select count(bnum) from sth_board
+</select>
+
+<!-- 게시물 목록 + 페이징 -->
+<select id="listPage" parameterType="hashMap" resultType="BoardDTO">
+ select
+  bnum, btitle, bcontent, bdate
+ from sth_board
+ order by bnum desc
+  limit #{displayPost}, #{postNum}
+</select>
+</mapper>

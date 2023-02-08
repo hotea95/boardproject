@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		
+	<context:component-scan base-package="sth.project.web"/>
+		
+		
+		   <bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="url"
+            value="jdbc:mysql://127.0.0.1:3306/springbasic?characterEncoding=UTF-8&amp;serverTimezone=UTC">
+        </property>
+        <property name="username" value="castello"></property>
+        <property name="password" value="1234"></property>
+    </bean>       
+   
+  <!-- sqlsessionfactory 인터페이스를 생성하는 빈을 구현하고 팩토리에서 빈으로 호출한 결과를반환한다. -->
+<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+   <!-- DriverManagerDataSource 클래스를 참조하여 SqlSessionFactoryBea  클래스의n setDataSource 메소드 값을 호출한다 .-->  
+<property name="dataSource" ref="dataSource"/>
+<!-- configuration 설정 파일을 연결한다 -->
+<property name="configLocation" value="classpath:/configuration/config.xml"/>
+   <!-- mapper 설정 파일을 연결한다. -->
+   <property name="mapperLocations" value="classpath:/mapper/mapper.xml"/>
+    </bean>
+    
+    <!-- sqlsession 인터페이스의 인스턴스를 대체하여 sqlsession 인터페이스의 모든 기능을 구현한다. -->
+    <bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSessionTemplate">
+<constructor-arg ref="sqlSessionFactoryBean"/>
+</bean>
+    <!-- 트랜잭션이 종료할 떄 정상 종료인 커밋인지 비정상 종료인 롤백인지를 결정한다. -->
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" id="transactionManager">
+    <property name="dataSource" ref="dataSource"/>
+</bean>
+
+<!-- @Transactional 어노테이션을 사용할수있도록 한다 -->
+<tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+</beans>
